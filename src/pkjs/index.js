@@ -51,18 +51,18 @@ function sendActionToEndpoint(actionText){
             var actionResponse = response['actionResponse'];
             Pebble.sendAppMessage({'ActionResponse':actionResponse});
           } else {
-            Pebble.sendAppMessage({'ActionResponse':'I have nothing to say.'});
+            Pebble.sendAppMessage({'ActionResponse':'Error: I reached the endpoint but... I have nothing to say.'});
           }
         } else {
-	    //Non-200 status code
-	    console.log("endpointError::statuscode:" + req.status);
-	    if (req.status == 404) {
-		Pebble.sendAppMessage({'ActionResponse':'Error: I could not find the endpoint. '});
-	    } else if (req.status == 403 || req.status == 401) {
-		Pebble.sendAppMessage({'ActionResponse':'Error: Permission denied. Check your secret is correct.'});
-	    } else {
-		Pebble.sendAppMessage({'ActionResponse':'I could not get a response from the endpoint.'});
-  	    }
+          //Non-200 status code
+          console.log("endpointError::statuscode:" + req.status);
+          if (req.status == 404) {
+            Pebble.sendAppMessage({'ActionResponse':'Error: I could not find the endpoint. '});
+          } else if (req.status == 403 || req.status == 401) {
+            Pebble.sendAppMessage({'ActionResponse':'Error: Permission denied. Check to see if your secret password is correct.'});
+          } else {
+            Pebble.sendAppMessage({'ActionResponse':'Error: I could not get a response from the endpoint.'});
+          }
         }
       }
     }
