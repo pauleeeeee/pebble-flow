@@ -38,6 +38,7 @@ Pebble.addEventListener('appmessage', function(e) {
 
 function sendActionToEndpoint(actionText){
     var req = new XMLHttpRequest();
+    console.log("Endpoint: " + configuration.EndpointURL.value);
     req.open("POST", configuration.EndpointURL.value);
     req.setRequestHeader("Content-Type", "application/json");
     req.onload = function(e) {
@@ -53,7 +54,15 @@ function sendActionToEndpoint(actionText){
             Pebble.sendAppMessage({'ActionResponse':'I have nothing to say.'});
           }
         } else {
-            Pebble.sendAppMessage({'ActionResponse':'I could not get a response from the endpoint.'});
+	    //Non-200 status code
+	    console.log("endpointError::statuscode:" + req.status);
+	    if (req.status == 404) {
+		Pebble.sendAppMessage({'ActionResponse':'Error: I could not find the endpoint. '});
+	    } else if (req.status == 403 || req.status == 401) {
+		Pebble.sendAppMessage({'ActionResponse':'Error: Permission denied. Check your secret is correct.'});
+	    } else {
+		Pebble.sendAppMessage({'ActionResponse':'I could not get a response from the endpoint.'});
+  	    }
         }
       }
     }
