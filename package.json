@@ -26,7 +26,8 @@
       "watchface": false
     },
     "messageKeys": {
-      "ActionResponse": 100
+      "ActionResponse": 100,
+      "ActionStatus": 101
     },
     "resources": {
       "media": []
