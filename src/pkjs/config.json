@@ -1,0 +1,35 @@
+[
+    { 
+        "type": "heading", 
+        "defaultValue": "Pebble Flow" 
+    },
+    {
+        "type":"section",
+        "items":[
+            {
+            "type": "text",
+            "defaultValue": "This simple Pebble app allows you to send a voice-dictated command to an endpoint of your choosing. This app then accepts a single string response from your endpoint, displaying the string as a message. You can treat it like your own assistant. You send the commands to your endpoint and handle them there. Then, ensure your endpoint send a human readable response (which will be displayed on your Pebble). For more information on how this works, see (resource url)."
+            },
+            {
+            "type": "heading",
+            "defaultValue": "Configuration"
+            },
+            {
+                "type":"input",
+                "messageKey":"EndpointURL",
+                "label":"Endpoint URL",
+                "description":"enter your endpoint's URL"
+            },
+            {
+                "type":"input",
+                "messageKey":"SecretPassword",
+                "label":"Secret Password",
+                "description":"put your endpoint's secret password here"
+            }
+        ]
+    },
+    {
+        "type":"submit",
+        "defaultValue":"save"
+    }
+]

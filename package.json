@@ -1,0 +1,35 @@
+{
+  "name": "pebble-flow",
+  "author": "swansswansswansswanssosoft",
+  "version": "1.0.0",
+  "keywords": [
+    "pebble-app"
+  ],
+  "private": true,
+  "dependencies": {
+    "pebble-clay": "^1.0.4"
+  },
+  "pebble": {
+    "displayName": "pebble-flow",
+    "uuid": "567495e8-05af-401a-aa99-ec4357b2a116",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "capabilities": [
+      "configurable"
+    ],
+    "targetPlatforms": [
+      "basalt",
+      "chalk",
+      "diorite"
+    ],
+    "watchapp": {
+      "watchface": false
+    },
+    "messageKeys": {
+      "ActionResponse": 100
+    },
+    "resources": {
+      "media": []
+    }
+  }
+}
