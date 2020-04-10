@@ -102,4 +102,4 @@ function sendActionToEndpoint(actionText){
 // 10 = home success
 // etc
 //
-// I based these status codes on existing actions. Try to send one of these codes. If none fit just use the generic success.
+// I based these status codes on existing images / assets that would be convenient to implement. Try to send one of these codes. If none fit just use the generic success.
