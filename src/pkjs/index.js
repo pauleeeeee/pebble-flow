@@ -24,7 +24,7 @@ Pebble.addEventListener("ready",
         if (configuration){
            // great 
         } else {
-            Pebble.showSimpleNotificationOnPebble("Configuration Needed", "Please visit the watch face configuration page inside the Pebble phone app.");
+            // Pebble.showSimpleNotificationOnPebble("Configuration Needed", "Please visit the watch face configuration page inside the Pebble phone app.");
         }
     }
 );
@@ -63,7 +63,7 @@ function sendActionToEndpoint(actionText){
           console.log("endpointError::statuscode:" + req.status);
           if (req.status == 404) {
             Pebble.sendAppMessage({
-              'ActionResponse':'Error: I could not find the endpoint.',
+              'ActionResponse':'Sorry, but I could not find the endpoint.',
               'ActionStatus': 3
             });
           } else if (req.status == 403 || req.status == 401) {
@@ -93,4 +93,13 @@ function sendActionToEndpoint(actionText){
 // 1 = generic success
 // 2 = auth failed
 // 3 = not found
+// 4 = pin sent success
+// 5 = calendar success
+// 6 = reminder success 
+// 7 = lights success
+// 8 = clock / timer success
+// 9 = music success
+// 10 = home success
 // etc
+//
+// I based these status codes on existing actions. Try to send one of these codes. If none fit just use the generic success.

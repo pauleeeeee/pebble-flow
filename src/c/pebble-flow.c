@@ -186,6 +186,26 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
   }
 }
 
+static GPath *s_water_path = NULL;
+
+//operate on the first 9, leave stationary the last 2
+
+static const GPathInfo WATER_PATH_INFO = {
+  .num_points = 11,
+  .points = (GPoint []) {{-5, 26}, {10, 32}, {30, 25}, {50, 32}, {70, 25}, {80, 32}, {120, 23}, {135, 30}, {150, 26}, {150, 45}, {-5, 45}}
+};
+
+static void s_canvas_layer_update_proc(Layer *layer, GContext *ctx) {
+  // Fill the path:
+  graphics_context_set_fill_color(ctx, GColorPictonBlue);
+  gpath_draw_filled(ctx, s_water_path);
+  // Stroke the path:
+  graphics_context_set_stroke_width(ctx, 2);
+  graphics_context_set_stroke_color(ctx, GColorBlack);
+  gpath_draw_outline(ctx, s_water_path);
+}
+
+
 static void in_dropped_handler(AppMessageResult reason, void *context){
   //handle failed message
   add_new_message("Message was dropped between the phone and the Pebble", false);
@@ -203,12 +223,14 @@ static void prv_window_load(Window *window) {
   dictation_session_enable_confirmation(s_dictation_session, false);
 
   //create scroll layer with shortened root layer bounds ( to accommodate bouncing dots )
-  GRect scroll_bounds = GRect(0, 0, bounds.size.w, bounds.size.h - 20);
+  GRect scroll_bounds = GRect(0, 0, bounds.size.w, bounds.size.h - 40);
   s_scroll_layer = scroll_layer_create(scroll_bounds);
   // Set the scrolling content size
   scroll_layer_set_content_size(s_scroll_layer, GSize(scroll_bounds.size.w, scroll_bounds.size.h-2));
   //we could make the scroll layer page instead of single click scroll but sometimes that leads to UI problems
   scroll_layer_set_paging(s_scroll_layer, false);
+  //hide content indicator shadow
+  scroll_layer_set_shadow_hidden(s_scroll_layer, true);
   // set the click config provider of the scroll layer. This adds the short and long select press callbacks. it silently preserves scrolling functionality
   scroll_layer_set_callbacks(s_scroll_layer, (ScrollLayerCallbacks){
     .click_config_provider = prv_scroll_click_config_provider
@@ -219,20 +241,23 @@ static void prv_window_load(Window *window) {
   //add scroll layer to the root window
   layer_add_child(window_layer, scroll_layer_get_layer(s_scroll_layer));
 
-  // Create the holding layer for the assistant animation layer
-  GRect anim_bounds = GRect(0, bounds.size.h - 20, bounds.size.w, bounds.size.h);
-  s_canvas_layer = layer_create(anim_bounds);
+  //make waves dog; hang 10 you know?
+  s_water_path = gpath_create(&WATER_PATH_INFO);
 
+  // Create the holding layer for the assistant animation layer
+  GRect anim_bounds = GRect(0, bounds.size.h - 40, bounds.size.w, 40);
+  s_canvas_layer = layer_create(anim_bounds);
+  layer_set_update_proc(s_canvas_layer, s_canvas_layer_update_proc);
   //add canvas to window
   layer_add_child(window_layer, s_canvas_layer);
 
   //start dictation on first launch
-  dictation_session_start(s_dictation_session);
+  // dictation_session_start(s_dictation_session);
 
   //testing
-  // add_new_message("test test test test test test test test test test test test test test test test test test ", true);
-  // add_new_message("test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test ", false);
-  // draw_message_bubbles();
+  add_new_message("test test test test test test test test test test test test test test test test test test ", true);
+  add_new_message("test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test ", false);
+  draw_message_bubbles();
 
 }
 
