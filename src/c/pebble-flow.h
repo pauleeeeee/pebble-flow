@@ -20,3 +20,5 @@ typedef struct MessageBubble {
   bool is_user;
 
 } MessageBubble;
+
+
