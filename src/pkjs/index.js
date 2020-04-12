@@ -46,12 +46,19 @@ function sendActionToEndpoint(actionText){
         if(req.status == 200) {
           var response = JSON.parse(req.responseText);
           console.log("response");
-          console.log(response);
+          console.log(JSON.stringify(response));
           if(response.actionResponse && response.actionStatus) {
-            Pebble.sendAppMessage({
-              'ActionResponse': response.actionResponse,
-              'ActionStatus': response.actionStatus
-            });
+	    if (isNaN(response.actionStatus)) {
+            	Pebble.sendAppMessage({
+            	  'ActionResponse':'I reached the endpoint but the response was incomplete.',
+            	  'ActionStatus': 0
+            	});
+	    } else {
+	            Pebble.sendAppMessage({
+	              'ActionResponse': response.actionResponse,
+	              'ActionStatus': response.actionStatus
+	            });
+	    }
           } else {
             Pebble.sendAppMessage({
               'ActionResponse':'I reached the endpoint but the response was incomplete.',
