@@ -18,9 +18,8 @@ static Layer *s_ocean_layer, *s_water_layer, *s_pulse_waves_layer;
 static AppTimer *s_exit_timer;
 //create a boolean that determines whether or not the animation should be animated
 // static bool wave_animated = false;
-static bool float_animated = false;
 static int timeout = 30000;
-
+static bool float_animated = false;
 
 static int32_t resource_ids[]={
   RESOURCE_ID_ERROR, RESOURCE_ID_CONFIRMATION, RESOURCE_ID_ERROR, RESOURCE_ID_ERROR, RESOURCE_ID_CLOCK, RESOURCE_ID_CALENDAR, RESOURCE_ID_HOME, RESOURCE_ID_MICROPHONE, RESOURCE_ID_MUSIC, RESOURCE_ID_PIN, RESOURCE_ID_REMINDER, RESOURCE_ID_BOTTLE, RESOURCE_ID_SUNNY
