@@ -24,7 +24,7 @@ Pebble.addEventListener("ready",
         if (configuration){
            // great 
         } else {
-            Pebble.showSimpleNotificationOnPebble("Configuration Needed", "Please visit the watch face configuration page inside the Pebble phone app.");
+            // Pebble.showSimpleNotificationOnPebble("Configuration Needed", "Please visit the watch face configuration page inside the Pebble phone app.");
         }
     }
 );
@@ -44,25 +44,39 @@ function sendActionToEndpoint(actionText){
     req.onload = function(e) {
       if (req.readyState == 4) {
         if(req.status == 200) {
+          var response = JSON.parse(req.responseText);
           console.log("response");
           console.log(response);
-          var response = JSON.parse(req.responseText);
-          if(response['actionResponse']) {
-            var actionResponse = response['actionResponse'];
-            Pebble.sendAppMessage({'ActionResponse':actionResponse});
+          if(response.actionResponse && response.actionStatus) {
+            Pebble.sendAppMessage({
+              'ActionResponse': response.actionResponse,
+              'ActionStatus': response.actionStatus
+            });
           } else {
-            Pebble.sendAppMessage({'ActionResponse':'I have nothing to say.'});
+            Pebble.sendAppMessage({
+              'ActionResponse':'I reached the endpoint but the response was incomplete.',
+              'ActionStatus': 0
+            });
           }
         } else {
-	    //Non-200 status code
-	    console.log("endpointError::statuscode:" + req.status);
-	    if (req.status == 404) {
-		Pebble.sendAppMessage({'ActionResponse':'Error: I could not find the endpoint. '});
-	    } else if (req.status == 403 || req.status == 401) {
-		Pebble.sendAppMessage({'ActionResponse':'Error: Permission denied. Check your secret is correct.'});
-	    } else {
-		Pebble.sendAppMessage({'ActionResponse':'I could not get a response from the endpoint.'});
-  	    }
+          //Non-200 status code
+          console.log("endpointError::statuscode:" + req.status);
+          if (req.status == 404) {
+            Pebble.sendAppMessage({
+              'ActionResponse':'Sorry, but I could not find the endpoint.',
+              'ActionStatus': 3
+            });
+          } else if (req.status == 403 || req.status == 401) {
+            Pebble.sendAppMessage({
+              'ActionResponse':'Permission denied. Check to see if your secret password is correct.',
+              'ActionStatus':2
+            });
+          } else {
+            Pebble.sendAppMessage({
+              'ActionResponse':'I could not get a response from the endpoint.',
+              'ActionStatus':0
+            });
+          }
         }
       }
     }
@@ -72,3 +86,20 @@ function sendActionToEndpoint(actionText){
     }));
 }
   
+
+
+// status codes for ActionStatus:
+// 0 = generic failed
+// 1 = generic success
+// 2 = auth failed
+// 3 = not found
+// 4 = pin sent success
+// 5 = calendar success
+// 6 = reminder success 
+// 7 = lights success
+// 8 = clock / timer success
+// 9 = music success
+// 10 = home success
+// etc
+//
+// I based these status codes on existing images / assets that would be convenient to implement. Try to send one of these codes. If none fit just use the generic success.

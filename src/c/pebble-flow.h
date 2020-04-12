@@ -9,6 +9,7 @@
 #define MAX_MESSAGE_LENGTH 512
 
 #define ActionResponse 100
+#define ActionStatus 101
 
 
 typedef struct MessageBubble {
@@ -19,3 +20,5 @@ typedef struct MessageBubble {
   bool is_user;
 
 } MessageBubble;
+
+

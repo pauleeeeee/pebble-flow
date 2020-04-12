@@ -26,10 +26,67 @@
       "watchface": false
     },
     "messageKeys": {
-      "ActionResponse": 100
+      "ActionResponse": 100,
+      "ActionStatus": 101
     },
     "resources": {
-      "media": []
+      "media": [
+        {
+          "type": "raw",
+          "name": "MICROPHONE",
+          "file": "images/microphone.pdc"
+        },
+        {
+          "type": "raw",
+          "name": "CLOCK",
+          "file": "images/clock.pdc"
+        },
+        {
+          "type": "raw",
+          "name": "CALENDAR",
+          "file": "images/calendar.pdc"
+        },
+        {
+          "type": "raw",
+          "name": "ERROR",
+          "file": "images/error.pdc"
+        },
+        {
+          "type": "raw",
+          "name": "HOME",
+          "file": "images/home.pdc"
+        },
+        {
+          "type": "raw",
+          "name": "CONFIRMATION",
+          "file": "images/confirmation.pdc"
+        },
+        {
+          "type": "raw",
+          "name": "MUSIC",
+          "file": "images/music.pdc"
+        },
+        {
+          "type": "raw",
+          "name": "PIN",
+          "file": "images/pin.pdc"
+        },
+        {
+          "type": "raw",
+          "name": "REMINDER",
+          "file": "images/reminder.pdc"
+        },
+        {
+          "type": "raw",
+          "name": "BOTTLE",
+          "file": "images/bottle.pdc"
+        },
+        {
+          "type": "raw",
+          "name": "SUNNY",
+          "file": "images/sunny.pdc"
+        }
+      ]
     }
   }
 }
