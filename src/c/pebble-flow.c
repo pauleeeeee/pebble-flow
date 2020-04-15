@@ -22,7 +22,19 @@ static int timeout = 30000;
 static bool float_animated = false;
 
 static int32_t resource_ids[]={
-  RESOURCE_ID_ERROR, RESOURCE_ID_CONFIRMATION, RESOURCE_ID_ERROR, RESOURCE_ID_ERROR, RESOURCE_ID_CLOCK, RESOURCE_ID_CALENDAR, RESOURCE_ID_HOME, RESOURCE_ID_MICROPHONE, RESOURCE_ID_MUSIC, RESOURCE_ID_PIN, RESOURCE_ID_REMINDER, RESOURCE_ID_BOTTLE, RESOURCE_ID_SUNNY
+  RESOURCE_ID_ERROR, 
+  RESOURCE_ID_CONFIRMATION, 
+  RESOURCE_ID_ERROR, 
+  RESOURCE_ID_ERROR, 
+  RESOURCE_ID_PIN, 
+  RESOURCE_ID_CALENDAR, 
+  RESOURCE_ID_REMINDER, 
+  RESOURCE_ID_HOME, 
+  RESOURCE_ID_CLOCK, 
+  RESOURCE_ID_MUSIC, 
+  RESOURCE_ID_MICROPHONE, 
+  RESOURCE_ID_BOTTLE, 
+  RESOURCE_ID_SUNNY
 };
 
 
@@ -419,7 +431,13 @@ static void select_callback(ClickRecognizerRef recognizer, void *context) {
     WATER_PATH_INFO.points[i].y = getRandomNumber(20,33);
   }
   layer_set_hidden(s_indicator_icon_layer, true);
-  dictation_session_start(s_dictation_session);
+  if (s_dictation_session){
+    dictation_session_start(s_dictation_session);
+  } else {
+    s_dictation_session = dictation_session_create(sizeof(s_sent_message), dictation_session_callback, NULL);
+    dictation_session_enable_confirmation(s_dictation_session, false);
+    dictation_session_start(s_dictation_session);
+  }
   app_timer_reschedule(s_exit_timer, timeout);
 }
 
@@ -522,7 +540,7 @@ static void prv_window_load(Window *window) {
   //create holding layer for the icon indicator
   s_indicator_icon_layer = layer_create(GRect(0,0,bounds.size.w,40));
   layer_set_update_proc(s_indicator_icon_layer, s_indicator_icon_layer_update_proc);
-  s_indicator_icon_image = gdraw_command_image_create_with_resource(resource_ids[7]);
+  s_indicator_icon_image = gdraw_command_image_create_with_resource(resource_ids[10]);
   layer_add_child(s_ocean_layer, s_indicator_icon_layer);
 
   //create holding layer for the water indicator
@@ -554,8 +572,15 @@ static void prv_window_load(Window *window) {
 }
 
 static void prv_window_unload(Window *window) {
+  for (int i = 0; i < MAX_MESSAGES; i++){
+    text_layer_destroy(s_text_layers[i]);
+  }
   dictation_session_destroy(s_dictation_session);
   layer_destroy(s_ocean_layer);
+  layer_destroy(s_water_layer);
+  layer_destroy(s_indicator_icon_layer);
+  gpath_destroy(s_water_path);
+  gdraw_command_image_destroy(s_indicator_icon_image);
   scroll_layer_destroy(s_scroll_layer);
   //probably need to destroy other stuff here like the s_message_bubbles and the s_text_layers arrays
 }
