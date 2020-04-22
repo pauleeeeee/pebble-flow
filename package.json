@@ -27,7 +27,8 @@
     },
     "messageKeys": {
       "ActionResponse": 100,
-      "ActionStatus": 101
+      "ActionStatus": 101,
+      "StartDictationOnLaunch": 102
     },
     "resources": {
       "media": [

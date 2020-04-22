@@ -20,7 +20,7 @@ static AppTimer *s_exit_timer;
 // static bool wave_animated = false;
 static int timeout = 30000;
 static bool float_animated = false;
-static bool immediate_dictation = false;
+static int immediate_dictation = 0;
 
 static int32_t resource_ids[]={
   RESOURCE_ID_ERROR, 
@@ -163,7 +163,7 @@ static void s_water_layer_update_proc(Layer *layer, GContext *ctx) {
   graphics_context_set_stroke_width(ctx, 2);
   graphics_context_set_stroke_color(ctx, GColorBlack);
   gpath_draw_outline(ctx, s_water_path);
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "animation affecting update proc: %i", 1);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "animation affecting update proc: %i", 1);
 
 }
 
@@ -470,16 +470,17 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
     float_animation();
     //gotta update the view
     draw_message_bubbles();
-  } else {
-    //basically this should never happen
-    change_indicator_icon(0);
-    add_new_message("Tuple error.", false);
-    draw_message_bubbles();
   }
 
   Tuple *response_status_tuple = dict_find( iter, ActionStatus);
   if (response_status_tuple) {
     change_indicator_icon(response_status_tuple->value->int32);
+  }
+
+  Tuple *start_dictation_on_launch_tuple = dict_find( iter, StartdDictationOnLaunch );
+  if (start_dictation_on_launch_tuple) {
+    immediate_dictation = start_dictation_on_launch_tuple->value->int32;
+    persist_write_int(StartdDictationOnLaunch, start_dictation_on_launch_tuple->value->int32);
   }
 
   app_timer_reschedule(s_exit_timer, timeout);
@@ -505,6 +506,7 @@ static void prv_window_load(Window *window) {
   //create dictation and set confirmation mode to false
   s_dictation_session = dictation_session_create(sizeof(s_sent_message), dictation_session_callback, NULL);
   dictation_session_enable_confirmation(s_dictation_session, false);
+  
 
   //create scroll layer with shortened root layer bounds ( to accommodate bouncing dots )
   GRect scroll_bounds = GRect(0, 0, bounds.size.w, bounds.size.h - 40);
@@ -558,8 +560,9 @@ static void prv_window_load(Window *window) {
   // layer_add_child(s_ocean_layer, s_pulse_waves_layer);
 
   //start dictation on first launch
+  immediate_dictation = persist_read_int(StartdDictationOnLaunch);
   if (immediate_dictation) {
-	dictation_session_start(s_dictation_session);
+	  dictation_session_start(s_dictation_session);
   }
 
   //testing

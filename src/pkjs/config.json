@@ -25,6 +25,16 @@
                 "messageKey":"SecretPassword",
                 "label":"Secret Password",
                 "description":"put your endpoint's secret password here"
+            },
+            {
+                "type": "heading",
+                "defaultValue": "Options"
+            },
+            {
+                "type": "toggle",
+                "messageKey": "StartDictationOnLaunch",
+                "label": "start dictation on launch",
+                "defaultValue": false
             }
         ]
     },

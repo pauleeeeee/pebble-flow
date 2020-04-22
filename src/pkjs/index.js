@@ -15,6 +15,11 @@ Pebble.addEventListener('webviewclosed', function(e) {
     //console.log('web view closed');
     configuration = clay.getSettings(e.response, false);
     localStorage.setItem("configuration", JSON.stringify(configuration));
+    if(configuration.StartDictationOnLaunch.value) {
+      Pebble.sendAppMessage({"StartDictationOnLaunch":(configuration.StartDictationOnLaunch.value ? 1 : 0)});
+      console.log(configuration.StartDictationOnLaunch.value);
+      console.log((configuration.StartDictationOnLaunch.value ? 1 : 0));
+    }
     //console.log(JSON.stringify(configuration));
 });
 

@@ -10,6 +10,7 @@
 
 #define ActionResponse 100
 #define ActionStatus 101
+#define StartdDictationOnLaunch 102
 
 
 typedef struct MessageBubble {
