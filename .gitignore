@@ -1,2 +1,6 @@
 node_modules/
 build/
+working/
+.vscode/
+wscript
+.lock-waf_darwin_build
