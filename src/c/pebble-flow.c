@@ -20,6 +20,7 @@ static AppTimer *s_exit_timer;
 // static bool wave_animated = false;
 static int timeout = 30000;
 static bool float_animated = false;
+static bool immediate_dictation = false;
 
 static int32_t resource_ids[]={
   RESOURCE_ID_ERROR, 
@@ -557,7 +558,9 @@ static void prv_window_load(Window *window) {
   // layer_add_child(s_ocean_layer, s_pulse_waves_layer);
 
   //start dictation on first launch
-  // dictation_session_start(s_dictation_session);
+  if (immediate_dictation) {
+	dictation_session_start(s_dictation_session);
+  }
 
   //testing
   // add_new_message("test test test test test test test test test test test test test test test test test test ", true);
