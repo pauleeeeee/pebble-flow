@@ -243,8 +243,6 @@ static void float_animation(){
 
 }
 
-
-
 static PropertyAnimation *property_animation_reset_water_level; 
 static Animation *animation_reset_water_level;
 
@@ -355,7 +353,7 @@ static void s_indicator_icon_layer_update_proc(Layer *layer, GContext *ctx){
     // If the image was loaded successfully...
   if (s_indicator_icon_image) {
     // Draw it
-    gdraw_command_image_draw(ctx, s_indicator_icon_image, GPoint((bounds.size.w - img_size.w) / 2,0));
+    gdraw_command_image_draw(ctx, s_indicator_icon_image, GPoint((bounds.size.w - img_size.w) / 2,10));
   }
 
 }
@@ -383,11 +381,73 @@ static void s_indicator_icon_layer_update_proc(Layer *layer, GContext *ctx){
 //   change_sequence(1);
 // }
 
+static PropertyAnimation *property_animation_icon_pop_up; 
+static Animation *animation_icon_pop_up;
+static PropertyAnimation *property_animation_icon_splash_down; 
+static Animation *animation_icon_splash_down;
+// static PropertyAnimation *property_animation_icon_float_up; 
+// static Animation *animation_icon_float_up;
+static Animation *animation_icon_in_sequence;
+
+
 static void change_indicator_icon(int id) {
-    gdraw_command_image_destroy(s_indicator_icon_image);
-    s_indicator_icon_image = gdraw_command_image_create_with_resource(resource_ids[id]);
-    layer_set_hidden(s_indicator_icon_layer, false);
+  GRect canvas_bounds = layer_get_bounds(s_ocean_layer);
+  GRect resting_position = layer_get_bounds(s_indicator_icon_layer);
+  GRect starting_position = GRect(resting_position.origin.x, resting_position.origin.y+resting_position.size.h, resting_position.size.w, resting_position.size.h);
+  
+  gdraw_command_image_destroy(s_indicator_icon_image);
+  s_indicator_icon_image = gdraw_command_image_create_with_resource(resource_ids[id]);
+
+  layer_set_frame(s_indicator_icon_layer, starting_position);
+
+  property_animation_icon_pop_up = property_animation_create_layer_frame(s_indicator_icon_layer, &starting_position, &GRect(resting_position.origin.x, resting_position.origin.y-10, resting_position.size.w, resting_position.size.h));
+  animation_icon_pop_up = property_animation_get_animation(property_animation_icon_pop_up);
+  animation_set_duration(animation_icon_pop_up, 250);
+  animation_set_curve(animation_icon_pop_up, AnimationCurveEaseOut);
+
+  property_animation_icon_splash_down = property_animation_create_layer_frame(s_indicator_icon_layer, &GRect(resting_position.origin.x, resting_position.origin.y-10, resting_position.size.w, resting_position.size.h), &GRect(resting_position.origin.x, resting_position.origin.y, resting_position.size.w, resting_position.size.h));
+  animation_icon_splash_down = property_animation_get_animation(property_animation_icon_splash_down);
+  animation_set_duration(animation_icon_splash_down, 500);
+  animation_set_curve(animation_icon_splash_down, AnimationCurveEaseIn);
+
+  animation_icon_in_sequence = animation_sequence_create(animation_icon_pop_up, animation_icon_splash_down, NULL);
+  layer_set_hidden(s_indicator_icon_layer, false);
+  animation_schedule(animation_icon_in_sequence);
+
 }
+
+// static PropertyAnimation *property_animation_icon_fly_in; 
+// static Animation *animation_icon_fly_in;
+// static PropertyAnimation *property_animation_icon_splash_down; 
+// static Animation *animation_icon_splash_down;
+// static PropertyAnimation *property_animation_icon_float_up; 
+// static Animation *animation_icon_float_up;
+// static Animation *animation_icon_in_sequence;
+
+
+// static void change_indicator_icon(int id) {
+//   GRect canvas_bounds = layer_get_bounds(s_ocean_layer);
+//   GRect resting_position = layer_get_bounds(s_indicator_icon_layer);
+//   GRect starting_position = GRect(canvas_bounds.origin.x - canvas_bounds.size.w, resting_position.origin.y - resting_position.size.h, resting_position.size.w, resting_position.size.h);
+  
+//   gdraw_command_image_destroy(s_indicator_icon_image);
+//   s_indicator_icon_image = gdraw_command_image_create_with_resource(resource_ids[id]);
+//   layer_set_hidden(s_indicator_icon_layer, false);
+
+//   property_animation_icon_fly_in = property_animation_create_layer_frame(s_indicator_icon_layer, &starting_position, &GRect(resting_position.origin.x, starting_position.origin.y, resting_position.size.w, resting_position.size.h));
+//   animation_icon_fly_in = property_animation_get_animation(property_animation_icon_fly_in);
+//   animation_set_duration(animation_icon_fly_in, 250);
+//   animation_set_curve(animation_icon_fly_in, AnimationCurveEaseIn);
+
+//   property_animation_icon_splash_down = property_animation_create_layer_frame(s_indicator_icon_layer, &GRect(resting_position.origin.x, starting_position.origin.y, resting_position.size.w, resting_position.size.h), &resting_position);
+//   animation_icon_splash_down = property_animation_get_animation(property_animation_icon_splash_down);
+//   animation_set_duration(animation_icon_splash_down, 500);
+//   animation_set_curve(animation_icon_splash_down, AnimationCurveEaseIn);
+
+//   animation_icon_in_sequence = animation_sequence_create(animation_icon_fly_in, animation_icon_splash_down, NULL);
+//   animation_schedule(animation_icon_in_sequence);
+
+// }
 
 //standard dictation callback
 static void handle_transcription(char *transcription_text) {
@@ -428,9 +488,9 @@ static void dictation_session_callback(DictationSession *session, DictationSessi
 //starts dictation if the user short presses select.
 static void select_callback(ClickRecognizerRef recognizer, void *context) {
   float_animated = false;
-  for (int i = 0; i < 8; i++){
-    WATER_PATH_INFO.points[i].y = getRandomNumber(20,33);
-  }
+  // for (int i = 0; i < 8; i++){
+  //   WATER_PATH_INFO.points[i].y = getRandomNumber(20,33);
+  // }
   layer_set_hidden(s_indicator_icon_layer, true);
   if (s_dictation_session){
     dictation_session_start(s_dictation_session);
@@ -440,17 +500,21 @@ static void select_callback(ClickRecognizerRef recognizer, void *context) {
     dictation_session_start(s_dictation_session);
   }
   app_timer_reschedule(s_exit_timer, timeout);
+  //change_indicator_icon(3);
+
 }
 
 //open pre-filled action menu
 static void long_select_callback(ClickRecognizerRef recognizer, void *context) {
   //future feature
   app_timer_reschedule(s_exit_timer, timeout);
+  change_indicator_icon(3);
 }
 
 //this click config provider is not really used
 static void prv_click_config_provider(void *context) {
   window_single_click_subscribe(BUTTON_ID_SELECT, select_callback);
+  window_long_click_subscribe(BUTTON_ID_SELECT, 500, long_select_callback, NULL);
 }
 
 //click config provider for the scroll window, setting both short and long select pushes.
@@ -508,7 +572,7 @@ static void prv_window_load(Window *window) {
   dictation_session_enable_confirmation(s_dictation_session, false);
   
 
-  //create scroll layer with shortened root layer bounds ( to accommodate bouncing dots )
+  //create scroll layer with shortened root layer bounds
   GRect scroll_bounds = GRect(0, 0, bounds.size.w, bounds.size.h - 40);
   s_scroll_layer = scroll_layer_create(scroll_bounds);
   // Set the scrolling content size
@@ -541,9 +605,10 @@ static void prv_window_load(Window *window) {
   layer_add_child(window_layer, s_ocean_layer);
 
   //create holding layer for the icon indicator
-  s_indicator_icon_layer = layer_create(GRect(0,0,bounds.size.w,40));
+  s_indicator_icon_layer = layer_create(GRect(0,-10,bounds.size.w,50));
   layer_set_update_proc(s_indicator_icon_layer, s_indicator_icon_layer_update_proc);
   s_indicator_icon_image = gdraw_command_image_create_with_resource(resource_ids[10]);
+  change_indicator_icon(10);
   layer_add_child(s_ocean_layer, s_indicator_icon_layer);
 
   //create holding layer for the water indicator
@@ -573,7 +638,7 @@ static void prv_window_load(Window *window) {
   float_animated = true;
   float_animation();
   variate_water();
-  s_exit_timer = app_timer_register(timeout, timeout_and_exit, NULL);
+  s_exit_timer = app_timer_register(60000, timeout_and_exit, NULL);
 
 }
 

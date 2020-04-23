@@ -29,8 +29,11 @@ Pebble.addEventListener("ready",
         if (configuration){
            // great 
         } else {
-            // Pebble.showSimpleNotificationOnPebble("Configuration Needed", "Please visit the watch face configuration page inside the Pebble phone app.");
-        }
+          Pebble.sendAppMessage({
+            'ActionResponse':'Be sure to visit the configuration page before getting started!',
+            'ActionStatus': 0
+          });
+    }
     }
 );
 
